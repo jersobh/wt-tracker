@@ -213,16 +213,20 @@ function buildServer(
 
             const swarms = tracker.swarms;
             let peersCount = 0;
+            let peersDetails = ''
             for (const swarm of swarms.values()) {
                 peersCount += swarm.peers.length;
             }
 
-            const serversStats = new Array<{ server: string; webSocketsCount: number }>();
+            const serversStats = new Array<{ server: string;
+              webSocketsCount: number,
+              peersDetails: string }>();
             for (const serverForStats of servers) {
                 const settings = serverForStats.settings;
                 serversStats.push({
                     server: `${settings.server.host}:${settings.server.port}`,
                     webSocketsCount: serverForStats.stats.webSocketsCount,
+                    peersDetails: peersDetails,
                 });
             }
 

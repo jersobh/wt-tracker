@@ -28,7 +28,7 @@
     "start": "node ./dist/run-uws-tracker.js",
     "build": "npm run lint && npm run clean && npm run compile",
     "compile": "tsc",
-    "lint": "eslint -c .eslintrc.js --ext .ts -f visualstudio lib",
+    "lint": "eslint --fix -c .eslintrc.js --ext .ts -f visualstudio lib",
     "clean": "rimraf dist",
     "watch": "tsc --watch",
     "test": "npm run test:clean && npm run test:compile && npm run test:run",

@@ -26,6 +26,7 @@ module.exports = {
         "@typescript-eslint/no-parameter-properties": "off",
         "@typescript-eslint/no-non-null-assertion": "off",
         "@typescript-eslint/typedef": "off",
+        "@typescript-eslint/no-invalid-this": 0,
         "@typescript-eslint/explicit-function-return-type": ["error", { "allowExpressions": true }],
         "@typescript-eslint/space-before-function-paren": ["error", { "anonymous": "never", "named": "never", "asyncArrow": "always" }],
         "@typescript-eslint/no-use-before-define": ["error", { "classes": false, "functions": false }],
@@ -79,7 +80,7 @@ module.exports = {
         "no-use-before-define": "off",
         "init-declarations": "off",
         "no-plusplus": "off",
-        "no-invalid-this": "off",
+        "no-invalid-this": 0,
         "max-lines-per-function": "off",
     },
 };

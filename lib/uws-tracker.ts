@@ -53,7 +53,9 @@ export class UWebSocketsTracker {
     readonly #app: TemplatedApp;
 
     private webSocketsCount = 0;
+
     private validateOrigin = false;
+
     private readonly maxConnections: number;
 
     public get app(): TemplatedApp {

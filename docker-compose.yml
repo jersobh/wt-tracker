@@ -1,0 +1,14 @@
+services:
+  wt-tracker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tracker
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+      - "8433:8433"
+    volumes:
+      - .:/usr/src/app
+      - "./config.json:/usr/src/app/config.json"
+    command: npm start

@@ -1,0 +1,29 @@
+{
+  "servers": [{
+      "server": {
+        "http": true,
+        "ws": true,
+        "stats": true,
+        "port": 8000,
+        "host": "0.0.0.0"
+      },
+      "websockets": {
+        "path": "/*",
+        "maxPayloadLength": 65536,
+        "idleTimeout": 240,
+        "compression": 1,
+        "maxConnections": 0
+      }
+    }
+  ],
+
+  "tracker": {
+    "maxOffers": 20,
+    "announceInterval": 120
+  },
+
+  "websocketsAccess": {
+    "denyOrigins": [],
+    "denyEmptyOrigin": false
+  }
+}
