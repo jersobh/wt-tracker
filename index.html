@@ -1,1 +1,158 @@
-ola
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Server Stats</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css">
+  <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
+  <script src="https://unpkg.com/vue-chartjs/dist/vue-chartjs.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.2/axios.min.js" integrity="sha512-SRGf0XYPMWMGCYQg7sQsW2/FMWq0L/mYhwxDraoUOeZ9sWO2/+R48bcXZaWOpwjCQbyRWP24zsbtqQxJXU1W2w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+</head>
+
+<body>
+
+    <div id="vapp" style="padding: 2%; margin: 0 auto; max-height: 100vh;">
+      <div id="load">
+        Plataform: {{ serverData.load[0].platform }} <br />
+        CPUs:  {{ serverData.load[0].cps }}
+      </div>
+      <!-- <h2>{{ datacollection }}</h2> -->
+      Torrents: {{ serverData.torrentsCount }} &nbsp;&nbsp;
+      Peers: {{ serverData.peersCount }} &nbsp;&nbsp;
+      Servers: {{ serverData.servers.length }} &nbsp;&nbsp;
+      <div class="row" style="width: 100%; margin:0 auto;">
+        <div style="width:90%;">
+          <doughnut-chart></doughnut-chart>
+        </div>
+        <div style="width:90%;">
+          <line-chart></line-chart>
+        </div>
+      </div>
+
+    </div>
+
+
+  <script type="text/javascript">
+
+
+    (function() {
+      Vue.component('doughnut-chart', {
+        extends: VueChartJs.Doughnut,
+        data: function () {
+          return {
+            message: 'Vue JS Test',
+            freemem: 0,
+            totalmem: 0,
+          }
+        },
+        methods: {
+          fetchData() {
+            //
+            let self = this
+            setInterval(function(){
+              axios.get("/stats.json").then(res => {
+                self.freemem = res.data.load[0].freemem
+                self.totalmem = res.data.load[0].totalMem
+               });
+              self.renderChart({
+
+                datasets: [
+                {
+                  data: [self.freemem, self.totalmem],
+                  backgroundColor: ['#4CAF50', '#F44336']
+                }
+              ],
+              labels: ["Free Memory", "Total Memory",]
+            }, {animation: false, responsive: true, maintainAspectRatio: false})
+            }, 1000);
+
+          }
+        },
+        mounted () {
+          this.fetchData()
+
+
+
+        }
+
+      })
+
+
+      Vue.component('line-chart', {
+        extends: VueChartJs.Line,
+        data: function () {
+          return {
+            serverData: {"torrentsCount":0,"peersCount":0,"servers":[{"server":"0.0.0.0:8000","webSocketsCount":0,"peersDetails":""}],"load":[{"platform":"linux","cps":8,"freemem":17850.98046875,"totalMem":30030.23046875,"freememPercentage":0.5944336819967483,"loadAverage":2.42}],"memory":{"rss":34639872,"heapTotal":4907008,"heapUsed":2453880,"external":1092652,"arrayBuffers":17602}},
+            chartdata: {
+               labels: [],
+               datasets: [
+                 {
+                   label: 'Load',
+                   backgroundColor: '#2196F3',
+                   data: []
+                 }
+               ]
+             },
+             options: {
+               animation: false,
+               responsive: true,
+               maintainAspectRatio: false
+             },
+          }
+        },
+        methods: {
+          fetchApi () {
+            let self = this
+            setInterval(function(){
+              axios.get("/stats.json").then(res => {
+                self.chartdata.datasets[0].data.push(res.data.load[0].loadAverage)
+                self.chartdata.labels.push('')
+              });
+              if (self.chartdata.datasets[0].data.length >= 100) {
+                  self.chartdata.datasets[0].data.shift();
+                  self.chartdata.labels.shift();
+              }
+              self.renderChart(self.chartdata, self.options)
+            }, 1000);
+          },
+        },
+        async mounted () {
+          var self = this
+          this.renderChart(self.chartdata, self.options)
+          this.fetchApi()
+        }
+
+      })
+
+
+      const app = document.getElementById('vapp')
+
+      const vueApp = new Vue({
+        el: '#vapp',
+        data: function () {
+          return {
+            serverData: {"torrentsCount":0,"peersCount":0,"servers":[{"server":"0.0.0.0:8000","webSocketsCount":0,"peersDetails":""}],"load":[{"platform":"linux","cps":8,"freemem":17850.98046875,"totalMem":30030.23046875,"freememPercentage":0.5944336819967483,"loadAverage":2.42}],"memory":{"rss":34639872,"heapTotal":4907008,"heapUsed":2453880,"external":1092652,"arrayBuffers":17602}}
+
+          }
+        },
+        methods: {
+
+        },
+        mounted () {
+          var self = this
+          setInterval(function(){
+            axios.get("/stats.json").then(res => {
+              self.serverData = res.data
+            });
+          }, 1000);
+          // alert('oi')
+        }
+      })
+    })();
+
+  </script>
+</body>
+
+</html>

@@ -17,6 +17,7 @@ RUN apk update && apk add --no-cache libc6-compat  gcompat git
 COPY . .
 RUN rm -rf node_modules
 RUN npm install
+RUN npm install -g nodemon
 RUN npm run build
 
 EXPOSE 8000 8433

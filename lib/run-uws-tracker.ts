@@ -18,10 +18,10 @@
 import { readFileSync } from "fs";
 import { HttpResponse, HttpRequest } from "uWebSockets.js";
 import * as Debug from "debug";
+import * as os from "os-utils";
 import { UWebSocketsTracker } from "./uws-tracker";
 import { FastTracker } from "./fast-tracker";
 import { Tracker } from "./tracker";
-
 // eslint-disable-next-line new-cap
 const debugRequests = Debug("wt-tracker:uws-tracker-requests");
 const debugRequestsEnabled = debugRequests.enabled;
@@ -210,17 +210,32 @@ function buildServer(
         "/stats.json",
         (response: HttpResponse, request: HttpRequest) => {
             debugRequest(server, request);
+            const load = new Array<{platform: string;
+                cps: number;
+                freemem: number;
+                totalMem: number;
+                freememPercentage: number;
+                loadAverage: number; }>();
+            load.push({
+                platform: os.platform(),
+                cps: os.cpuCount(),
+                freemem: os.freemem(),
+                totalMem: os.totalmem(),
+                freememPercentage: os.freememPercentage(),
+                loadAverage: os.loadavg(15),
+            });
+
 
             const swarms = tracker.swarms;
             let peersCount = 0;
-            let peersDetails = ''
+            const peersDetails = "";
             for (const swarm of swarms.values()) {
                 peersCount += swarm.peers.length;
             }
 
             const serversStats = new Array<{ server: string;
-              webSocketsCount: number,
-              peersDetails: string }>();
+                webSocketsCount: number;
+                peersDetails: string; }>();
             for (const serverForStats of servers) {
                 const settings = serverForStats.settings;
                 serversStats.push({
@@ -229,6 +244,7 @@ function buildServer(
                     peersDetails: peersDetails,
                 });
             }
+            console.log(load);
 
             response.
                 writeHeader("Content-Type", "application/json").
@@ -236,6 +252,7 @@ function buildServer(
                     torrentsCount: swarms.size,
                     peersCount: peersCount,
                     servers: serversStats,
+                    load: load,
                     memory: process.memoryUsage(),
                 }));
         },

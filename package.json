@@ -25,7 +25,7 @@
     "websockets"
   ],
   "scripts": {
-    "start": "node ./dist/run-uws-tracker.js",
+    "start": "nodemon ./dist/run-uws-tracker.js",
     "build": "npm run lint && npm run clean && npm run compile",
     "compile": "tsc",
     "lint": "eslint --fix -c .eslintrc.js --ext .ts -f visualstudio lib",
@@ -44,13 +44,16 @@
   },
   "dependencies": {
     "debug": "^4.1.1",
+    "os-utils": "^0.0.14",
     "uWebSockets.js": "github:uNetworking/uWebSockets.js#v17.4.0"
   },
   "devDependencies": {
+    "@types/node-os-utils": "^1.2.0",
+    "@types/os-utils": "^0.0.1",
     "@types/chai": "^4.2.11",
     "@types/debug": "^4.1.5",
     "@types/mocha": "^7.0.2",
-    "@types/node": "^13.13.4",
+    "@types/node": "^13.13.51",
     "@types/ws": "^7.2.4",
     "@typescript-eslint/eslint-plugin": "^2.30.0",
     "@typescript-eslint/parser": "^2.30.0",
